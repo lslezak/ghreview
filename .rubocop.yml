@@ -1,0 +1,6 @@
+# use the shared YaST defaults
+inherit_from:
+  https://raw.githubusercontent.com/yast/yast-devtools/master/ytools/y2tool/rubocop-0.71.0_yast_style.yml
+
+Gemspec/RequiredRubyVersion:
+  Enabled: false
