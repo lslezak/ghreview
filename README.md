@@ -1,8 +1,11 @@
 # `ghreview` - Mass GitHub Review from Command Line
 
+[![Gem Version](https://badge.fury.io/rb/ghreview.svg)](https://badge.fury.io/rb/ghreview)
+
+
 Sometimes you need to review a lot of pull requests with the same or very similar
 small change. Using the GitHub web UI is not convenient for approving many pull
-requests, for that purpose we have this `review.rb` helper script which can be
+requests. That's the reason for creating the `ghreview` script which can be
 used from command line.
 
 ## Features
@@ -13,6 +16,7 @@ used from command line.
 - It can approve each pull request with the default "LGTM" message (Looks Good
   To Me), but you can use a custom message, see the [options](#options) below
 - Optionally can merge the pull requests and delete the source branch
+- The pull requests can be passed as arguments or they can be read from a file
 
 If a pull request is not approved then it is skipped and not touched at all.
 You need to comment at the GitHub pull request page manually in that case.
@@ -29,6 +33,8 @@ ghreview --merge https://github.com/yast/yast-users/pull/218 \
   https://github.com/yast/yast-sysconfig/pull/29 \
   https://github.com/yast/yast-sound/pull/35
 ```
+
+Or use the `--file` option to read them from a file.
 
 ## Installation
 
@@ -66,7 +72,7 @@ Just make sure the `.netrc` file is not readable for the other users
 Alternatively the access token can be passed via environment variable `GH_TOKEN`:
 
 ```shell
-␣GH_TOKEN=... ./review ...
+␣GH_TOKEN=... ghreview ...
 ```
 
 :warning: *Note the extra space at the beginning of the line, that is
@@ -81,5 +87,7 @@ The script accepts these optional command line options:
 - `--delete` (or `-d`) - Delete the source branch after merging (the YaST
   GitHub repositories have now enabled the auto-removal of the merged branches
   so this option is usually not needed)
-- `--message` (or `-m`) - The text used in the, the default is `LGTM`
-  (Looks Good To Me)
+- `--message <message>` (or `-m <message>`) - The text used in the review
+  comment, the default is `LGTM` (Looks Good To Me)
+- `--file <file>` (or `-f <file>`) - Read the list of pull requests from a file
+  (one pull request per line)

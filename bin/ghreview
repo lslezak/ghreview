@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 # This script is intended for mass review of the same (or very similar)
 # GitHub pull requests.
@@ -22,10 +23,15 @@ require "rainbow"
 merge_pr = false
 delete_branch = false
 message = "LGTM"
+file = nil
 
 # parse the command line options
 OptionParser.new do |parser|
   parser.banner = "Usage: #{$PROGRAM_NAME} [options] PR_URL1 PR_URL2 ..."
+
+  parser.on("-f", "--file FILE", "Read the list of pull requests from file") do |f|
+    file = f
+  end
 
   parser.on("-g", "--merge", "Merge the approved pull requests") do |m|
     merge_pr = m
@@ -35,7 +41,7 @@ OptionParser.new do |parser|
     delete_branch = d
   end
 
-  parser.on("-m", "--message", "Approving message (default: \"#{message}\")") do |m|
+  parser.on("-m", "--message MESSAGE", "Approving message (default: \"#{message}\")") do |m|
     message = m
   end
 end.parse!
@@ -99,7 +105,7 @@ def print_pull_status(client, status_url, repo, pr)
 
     status = client.status(repo, sha)
     color = (status[:state] == "success") ? :green : :red
-    puts "Overall Status: " + Rainbow("#{status[:state]}").color(color)
+    puts "Overall Status: " + Rainbow((status[:state]).to_s).color(color)
 
     if status[:state] != "success"
       status[:statuses].each do |st|
@@ -161,18 +167,28 @@ def process_pull(client, pr_url, repo, pr, message, delete_branch, merge_pr)
 
   if pull[:merged]
     puts Rainbow("Already merged").bright.yellow
+  elsif ask_for_approval
+    approve_pull(client, pull, message, repo, pr, delete_branch, merge_pr)
+  end
+end
+
+def process_url(client, url, message, delete_branch, merge_pr)
+  if url =~ /^https:\/\/github.com\/(\S+)\/pull\/(\d+)/
+    repo = Regexp.last_match[1]
+    pr = Regexp.last_match[2]
+    process_pull(client, url, repo, pr, message, delete_branch, merge_pr)
   else
-    approve_pull(client, pull, message, repo, pr, delete_branch, merge_pr) if ask_for_approval
+    puts "#{url.inspect} is not a GitHub pull request URL, skipping"
   end
 end
 
 client = create_github_client
-ARGV.each do |p|
-  if p =~ /^https:\/\/github.com\/(\S+)\/pull\/(\d+)/
-    repo = Regexp.last_match[1]
-    pr = Regexp.last_match[2]
-    process_pull(client, p, repo, pr, message, delete_branch, merge_pr)
-  else
-    puts "Argument #{p.inspect} is not a GitHub pull request URL, skipping"
-  end
+ARGV.each do |url|
+  process_url(client, url, message, delete_branch, merge_pr)
+end
+
+return unless file
+
+File.open(file, "r").each_line do |line|
+  process_url(client, line, message, delete_branch, merge_pr)
 end
