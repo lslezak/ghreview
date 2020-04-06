@@ -49,7 +49,7 @@ Alternatively you can run it directly from the GitHub sources:
 ```shell
 git clone https://github.com/lslezak/ghreview.git
 cd ghreview
-bundle install --path vendor/bundle
+bundle install --path vendor/bundle --without development
 bundle exec bin/ghreview ...
 ```
 

@@ -167,6 +167,8 @@ def process_pull(client, pr_url, repo, pr, message, delete_branch, merge_pr)
 
   if pull[:merged]
     puts Rainbow("Already merged").bright.yellow
+  elsif pull[:closed_at]
+    puts Rainbow("Already closed").bright.yellow
   elsif ask_for_approval
     approve_pull(client, pull, message, repo, pr, delete_branch, merge_pr)
   end

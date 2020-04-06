@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = "ghreview"
-  s.version = "0.2.0"
+  s.version = "0.2.1"
   s.platform = Gem::Platform::RUBY
   s.required_ruby_version = ">= 2.0.0"
   s.authors = ["Ladislav Slezák"]
@@ -36,4 +36,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency("bundler", ">= 1.15.0", "< 3.0")
   s.add_development_dependency("rake", "~> 13")
   s.add_development_dependency("rubocop", "= 0.71.0")
+  # s.add_development_dependency("byebug")
 end
