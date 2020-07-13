@@ -1,0 +1,16 @@
+# See https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
+
+name: Rubocop
+
+on: [push, pull_request]
+
+jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+    container: ruby
+
+    steps:
+    - name: Install dependencies
+      run: bundle install
+    - name: Run Rubocop
+      run: bundle exec rake rubocop
