@@ -99,7 +99,7 @@ def print_pull_diff(diff_url)
 end
 
 # display the status (Travis)
-def print_pull_status(client, status_url, repo, pr)
+def print_pull_status(client, status_url, repo, pull_id)
   if status_url =~ /https:\/\/api.github.com\/repos\/.*\/statuses\/(.*)/ &&
       (sha = Regexp.last_match[1])
 
@@ -116,7 +116,7 @@ def print_pull_status(client, status_url, repo, pr)
   end
 
   # print the already existing reviews, maybe somebody has already approved/rejected
-  client.pull_request_reviews(repo, pr).each do |r|
+  client.pull_request_reviews(repo, pull_id).each do |r|
     puts "#{r[:state]} by #{r[:user][:login]}"
   end
 
@@ -138,15 +138,15 @@ def ask_for_approval
   ["Y", "y", ""].include?(input)
 end
 
-def approve_pull(client, pull, message, repo, pr, delete_branch, merge_pr)
+def approve_pull(client, pull, message, repo, pull_id, delete_branch, merge_pr)
   options = { event: "APPROVE", body: message }
-  puts "Approving #{repo} ##{pr}..."
-  client.create_pull_request_review(repo, pr, options)
+  puts "Approving #{repo} ##{pull_id}..."
+  client.create_pull_request_review(repo, pull_id, options)
 
   return unless merge_pr
 
-  puts "Merging #{repo} ##{pr}..."
-  client.merge_pull_request(repo, pr)
+  puts "Merging #{repo} ##{pull_id}..."
+  client.merge_pull_request(repo, pull_id)
 
   return unless delete_branch
 
@@ -158,19 +158,19 @@ def approve_pull(client, pull, message, repo, pr, delete_branch, merge_pr)
   client.delete_branch(repo, branch)
 end
 
-def process_pull(client, pr_url, repo, pr, message, delete_branch, merge_pr)
-  pull = client.pull_request(repo, pr)
+def process_pull(client, pr_url, repo, pull_id, message, delete_branch, merge_pr)
+  pull = client.pull_request(repo, pull_id)
 
   print_pull_summary(pr_url, pull[:title])
   print_pull_diff(pull[:diff_url])
-  print_pull_status(client, pull[:statuses_url], repo, pr)
+  print_pull_status(client, pull[:statuses_url], repo, pull_id)
 
   if pull[:merged]
     puts Rainbow("Already merged").bright.yellow
   elsif pull[:closed_at]
     puts Rainbow("Already closed").bright.yellow
   elsif ask_for_approval
-    approve_pull(client, pull, message, repo, pr, delete_branch, merge_pr)
+    approve_pull(client, pull, message, repo, pull_id, delete_branch, merge_pr)
   end
 end
 

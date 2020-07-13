@@ -10,7 +10,12 @@ jobs:
     container: ruby
 
     steps:
-    - name: Install dependencies
+
+    - name: Git Checkout
+      uses: actions/checkout@v1
+
+    - name: Install Dependencies
       run: bundle install
+
     - name: Run Rubocop
       run: bundle exec rake rubocop

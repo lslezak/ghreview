@@ -2,5 +2,12 @@
 inherit_from:
   https://raw.githubusercontent.com/yast/yast-devtools/master/ytools/y2tool/rubocop-0.71.0_yast_style.yml
 
+AllCops:
+  Exclude:
+    - "vendor/**/*"
+
+Metrics/ParameterLists:
+  Enabled: false
+
 Gemspec/RequiredRubyVersion:
   Enabled: false
