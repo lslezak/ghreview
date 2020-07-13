@@ -1,6 +1,8 @@
 # `ghreview` - Mass GitHub Review from Command Line
 
 [![Gem Version](https://badge.fury.io/rb/ghreview.svg)](https://badge.fury.io/rb/ghreview)
+[![Rubocop](https://github.com/lslezak/ghreview/workflows/Rubocop/badge.svg)](
+https://github.com/lslezak/ghreview/actions?query=workflow%3ARubocop+branch%3Amaster)
 
 
 Sometimes you need to review a lot of pull requests with the same or very similar
